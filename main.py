@@ -13,23 +13,18 @@ def get_prices():
     for ticker in TICKERS:
         try:
             stock = yf.Ticker(ticker)
-            hist = stock.history(period="2d")
-            if len(hist) >= 2:
-                price  = round(float(hist["Close"].iloc[-1]), 2)
-                prev   = round(float(hist["Close"].iloc[-2]), 2)
-                change = round(price - prev, 2)
-                changeP = round(((price - prev) / prev) * 100, 2)
-                high52 = round(float(hist["High"].max()), 2)
-                low52  = round(float(hist["Low"].min()), 2)
-            elif len(hist) == 1:
-                price   = round(float(hist["Close"].iloc[-1]), 2)
-                change  = 0.0
-                changeP = 0.0
-                high52  = price
-                low52   = price
-            else:
+            hist = stock.history(period="1mo")
+ 
+            if hist.empty:
                 result[ticker] = {"error": "no data"}
                 continue
+ 
+            price   = round(float(hist["Close"].iloc[-1]), 2)
+            prev    = round(float(hist["Close"].iloc[-2]), 2)
+            change  = round(price - prev, 2)
+            changeP = round(((price - prev) / prev) * 100, 2)
+            high52  = round(float(hist["High"].max()), 2)
+            low52   = round(float(hist["Low"].min()), 2)
  
             result[ticker] = {
                 "price":   price,
